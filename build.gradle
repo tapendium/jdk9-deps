@@ -1,38 +1,39 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
+
 plugins {
-    id "com.jfrog.bintray" version "1.8.4"
-    id "com.github.dcendents.android-maven" version "2.1"
+    id "maven-publish"
+    id "java"
 }
-apply plugin: 'java'
 
 sourceCompatibility = '1.8'
 
-group 'com.github.pengrad'
+group 'com.github.tapendium'
 version '1.0'
-
-bintray {
-    user = project.hasProperty('BINTRAY_USER') ? BINTRAY_USER : ""
-    key = project.hasProperty('BINTRAY_KEY') ? BINTRAY_KEY : ""
-    override = true
-    configurations = ['archives']
-    pkg {
-        repo = 'maven'
-        name = 'jdk9-deps'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/pengrad/jdk9-deps.git'
-    }
-}
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.java.srcDirs
     classifier 'sources'
 }
 
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.tapendium'
+            artifactId = 'jdk9-deps'
+            version = '1.0.0'
+            afterEvaluate {
+                from components.java
+            }
+        }
+    }
+}
+
 artifacts {
-//    archives javadocsJar
     archives sourcesJar
 }
